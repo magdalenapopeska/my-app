@@ -1,6 +1,9 @@
 .container {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .grid {
@@ -17,6 +20,16 @@
     padding-left: 30px;
 }
 
+.fullRow {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 30px;
+}
+.fullRow > * {
+    flex: 0 0 auto;
+}
+
 
 .row::-webkit-scrollbar {
     height: 8px;
@@ -28,17 +41,29 @@
 }
 
 .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
     display: flex;
-    justify-content: space-between; /* првиот лево, вториот десно */
+    justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
     background-color: #1c1c1c;
-    width: 100vw;         /* цел ширина на екранот */
-    box-sizing: border-box; /* да не излегува надвор */
+    width: 100vw;
+    box-sizing: border-box;
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
 }
 
 .navbar {
     display: flex;
+    align-items: center;
     gap: 20px;
 }
 

@@ -5,6 +5,7 @@ import styles from './Home.module.css';
 import { Link, useNavigate } from "react-router-dom";
 import Modal from '../components/Modal';
 import EnteringName from '../pages/EnteringName';
+import {overlay} from '../components/Modal.module.css'
 
 type User = {
     name: string;
@@ -13,9 +14,16 @@ type User = {
 };
 
 export default function Home() {
+    const [selectedGenre, setSelectedGenre] = useState<string>("All");
     const [schedule, setSchedule] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+
+    const genres = Array.from(
+        new Set(schedule.flatMap(item => item.show.genres))
+    );
+
+    const genreOptions = ["All", ...genres];
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem("user");
@@ -49,17 +57,33 @@ export default function Home() {
 
     return (
         <>
+            {isModalOpen && <div className={overlay} />}
             {isModalOpen && (
                 <Modal onClose={() => setIsModalOpen(false)}>
                     <EnteringName onSubmitName={handleUserSubmit} />
                 </Modal>
             )}
 
+
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.navbar}>
                         <Link to={'/account'}>Account</Link>
                         <Link to={'/watch-list'}>Watch List</Link>
+
+                        <div className={styles.filter}>
+                            <label htmlFor={"genre"}>Genre:</label>
+                            <select
+                            id = "genre"
+                            value={selectedGenre}
+                            onChange={e => setSelectedGenre(e.target.value)}
+                            >
+                                {genreOptions.map(genre => (
+                                    <option key={genre} value={genre}>{genre}</option>
+                                ))}
+                            </select>
+
+                        </div>
                     </div>
 
                     <div className={styles.search}>
@@ -74,21 +98,23 @@ export default function Home() {
                     <p>Loading shows...</p>
                 ) : (
                     <>
-                        {Object.keys(genreMap).map(genre => (
-                            <div key={genre}>
-                                <h2>{genre}</h2>
-                                <div className={styles.row}>
-                                    {genreMap[genre].map(item => (
-                                        <ShowCard
-                                            key={item.id}
-                                            title={item.show.name}
-                                            imgUrl={item.show.image?.medium}
-                                            network={item.show.network?.name}
-                                        />
-                                    ))}
+                        {Object.keys(genreMap)
+                            .filter(genre => selectedGenre === "All" || genre === selectedGenre)
+                            .map(genre => (
+                                <div key={genre} style={{width: "100%"}}>
+                                    <h2>{genre}</h2>
+                                    <div className={selectedGenre === genre ? styles.fullRow : styles.row}>
+                                        {genreMap[genre].map(item => (
+                                            <ShowCard
+                                                key={item.id}
+                                                title={item.show.name}
+                                                imgUrl={item.show.image?.medium}
+                                                network={item.show.network?.name}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </>
                 )}
             </div>
