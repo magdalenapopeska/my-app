@@ -19,14 +19,12 @@ export default function Home() {
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem("user");
-        const alreadyVisited = sessionStorage.getItem("alreadyVisited");
-
-        if (!storedUser && !alreadyVisited) {
+        if (!storedUser) {
             setIsModalOpen(true);
         }
-
-        sessionStorage.setItem("alreadyVisited", "true");
     }, []);
+
+
 
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
@@ -52,7 +50,7 @@ export default function Home() {
     return (
         <>
             {isModalOpen && (
-                <Modal>
+                <Modal onClose={() => setIsModalOpen(false)}>
                     <EnteringName onSubmitName={handleUserSubmit} />
                 </Modal>
             )}

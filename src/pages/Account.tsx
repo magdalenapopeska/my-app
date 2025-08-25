@@ -1,14 +1,16 @@
 import Credentials from "../components/Credentials";
 import classes from './Account.module.css';
+import {useNavigate} from "react-router-dom";
 export default function Account() {
-    const storedUser = localStorage.getItem('user');
+    const navigate = useNavigate();
+    const storedUser = sessionStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
 
     if (!user) return <p>No user logged in</p>;
 
     function logout() {
-        localStorage.removeItem('user');
-        window.location.href = '/';
+        sessionStorage.removeItem('user');
+        navigate("/");
     }
 
     return (
@@ -17,8 +19,8 @@ export default function Account() {
                 <div className={classes.backHome}>
                     <a href="/">Back to Home</a>
                 </div>
-                <div className={classes.backHome}>
-                    <a href={"/"}>Log Out</a>
+                <div className={classes.logout}>
+                    <button onClick={logout}>Log Out</button>
                 </div>
             </div>
 
