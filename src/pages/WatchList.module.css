@@ -1,0 +1,16 @@
+.backHome {
+    padding: 30px;
+}
+.backHome a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.backHome a:hover {
+    background-color: #ff4c4c;
+    transform: translateY(-2px);
+}

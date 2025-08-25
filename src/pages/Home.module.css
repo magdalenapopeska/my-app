@@ -1,0 +1,82 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+}
+.row {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-left: 30px;
+}
+
+
+.row::-webkit-scrollbar {
+    height: 8px;
+}
+
+.row::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between; /* првиот лево, вториот десно */
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1c1c1c;
+    width: 100vw;         /* цел ширина на екранот */
+    box-sizing: border-box; /* да не излегува надвор */
+}
+
+.navbar {
+    display: flex;
+    gap: 20px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.navbar a:hover {
+    background-color: #ff4c4c;
+    transform: translateY(-2px);
+}
+
+.search {
+    display: flex;
+    gap: 5px;
+    padding: 10px 20px;
+}
+
+.search input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.search button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    background-color: #ff4c4c;
+    color: white;
+    cursor: pointer;
+}
+
+.search button:hover {
+    background-color: #e03e3e;
+}
