@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getShowDetails } from "../api/tvmaze"; // make sure the path is correct
 import styles from "./ShowDetails.module.css";
-import { getShowDetails } from "../api/tvmaze";
 import classes from "./Account.module.css";
 
 type Episode = {
@@ -12,90 +12,117 @@ type Episode = {
     airdate: string | null;
 };
 
-type ShowInfo = {
+type Show = {
+    id: number;
     name: string;
-    image?: { medium?: string; original?: string };
-    summary?: string;
+    image?: { medium?: string; original?: string } | null;
+    summary?: string | null;
+    _embedded?: {
+        episodes: Episode[];
+    };
 };
 
 const ShowDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const showId = Number(id);
 
-    const [episodes, setEpisodes] = useState<Episode[]>([]);
-    const [showInfo, setShowInfo] = useState<ShowInfo | null>(null);
+    const [show, setShow] = useState<Show | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
 
     useEffect(() => {
-        if (!showId) return;
-
         const fetchShow = async () => {
             try {
                 const res = await getShowDetails(showId);
-                setShowInfo(res.data);
-                setEpisodes(res.data._embedded.episodes);
+                setShow(res.data);
+                if (res.data._embedded?.episodes?.length) {
+                    const firstSeason = Math.min(
+                        ...res.data._embedded.episodes.map((ep: Episode) => ep.season)
+                    );
+                    setSelectedSeason(firstSeason);
+                }
             } catch (error) {
-                console.error("Failed to fetch show:", error);
+                console.error("Failed to fetch show details:", error);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchShow();
     }, [showId]);
 
-    if (loading) return <p className={styles.noEpisodes}>Loading show details...</p>;
-    if (!showInfo) return <p className={styles.noEpisodes}>Show not found.</p>;
+    if (loading) return <p className={styles.noEpisodes}>Loading show...</p>;
+    if (!show) return <p className={styles.noEpisodes}>Show not found.</p>;
 
-    const sortedEpisodes = episodes.sort((a, b) => {
-        if (a.season === b.season) return (a.number ?? 0) - (b.number ?? 0);
-        return a.season - b.season;
-    });
+    const episodes = show._embedded?.episodes || [];
+
+    const episodesBySeason = episodes.reduce<Record<number, Episode[]>>((acc, ep) => {
+        if (!acc[ep.season]) acc[ep.season] = [];
+        acc[ep.season].push(ep);
+        return acc;
+    }, {});
+
+    const seasonNumbers = Object.keys(episodesBySeason)
+        .map(Number)
+        .sort((a, b) => a - b);
 
     return (
         <>
-
         <div className={classes.backHome}>
             <a href="/">Back to Home</a>
         </div>
         <div className={styles.container}>
-            <div className={styles.showHeader}>
-                {showInfo.image?.medium && (
-                    <img src={showInfo.image.medium} alt={showInfo.name} className={styles.showImage} />
-                )}
-                <div className={styles.showInfo}>
-                    <h1 className={styles.title}>{showInfo.name}</h1>
-                    {showInfo.summary && (
-                        <div
-                            className={styles.summary}
-                            dangerouslySetInnerHTML={{ __html: showInfo.summary }}
-                        />
-                    )}
-                </div>
-            </div>
+            <h1 className={styles.showTitle}>{show.name}</h1>
+            {show.image?.medium && (
+                <img src={show.image.medium} alt={show.name} className={styles.showImage} />
+            )}
+            {show.summary && (
+                <div
+                    className={styles.showSummary}
+                    dangerouslySetInnerHTML={{ __html: show.summary }}
+                />
+            )}
 
-            <h2 className={styles.title}>Episodes</h2>
-            {sortedEpisodes.length === 0 ? (
-                <p className={styles.noEpisodes}>No episodes available.</p>
+            {episodes.length > 0 ? (
+                <>
+                    <div className={styles.seasonSelector}>
+                        <label htmlFor="season">Select Season: </label>
+                        <select
+                            id="season"
+                            value={selectedSeason ?? ""}
+                            onChange={(e) => setSelectedSeason(Number(e.target.value))}
+                        >
+                            {seasonNumbers.map((season) => (
+                                <option key={season} value={season}>
+                                    Season {season}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <ul className={styles.episodeList}>
+                        {selectedSeason &&
+                            episodesBySeason[selectedSeason].map((ep) => (
+                                <li key={ep.id} className={styles.episodeItem}>
+                  <span className={styles.episodeLabel}>
+                    S{ep.season}E{ep.number}:
+                  </span>{" "}
+                                    <span className={styles.episodeTitle}>
+                    {ep.name && !/^Episode\s\d+$/.test(ep.name) && ep.name.trim() !== ""
+                        ? ep.name
+                        : ""}
+                  </span>
+                                    {ep.airdate && <span className={styles.airDate}>({ep.airdate})</span>}
+                                </li>
+                            ))}
+                    </ul>
+                </>
             ) : (
-                <ul className={styles.episodeList}>
-                    {sortedEpisodes.map((ep) => (
-                        <li key={ep.id} className={styles.episodeItem}>
-              <span className={styles.episodeLabel}>
-                S{ep.season ?? "?"}E{ep.number ?? "?"}:
-              </span>
-                            <span className={styles.episodeTitle}>
-                {ep.name && !/^Episode\s\d+$/.test(ep.name) && ep.name.trim() !== "" ? ep.name : ""}
-              </span>
-                            {ep.airdate && <span className={styles.airDate}>({ep.airdate})</span>}
-                        </li>
-                    ))}
-                </ul>
+                <p className={styles.noEpisodes}>No episodes available.</p>
             )}
         </div>
         </>
+
     );
 };
 
 export default ShowDetails;
-
