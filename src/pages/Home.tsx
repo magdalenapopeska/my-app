@@ -5,7 +5,7 @@ import styles from './Home.module.css';
 import { Link, useNavigate } from "react-router-dom";
 import Modal from '../components/Modal';
 import EnteringName from '../pages/EnteringName';
-import {overlay} from '../components/Modal.module.css'
+import { overlay } from '../components/Modal.module.css';
 
 type User = {
     name: string;
@@ -17,12 +17,10 @@ export default function Home() {
     const [selectedGenre, setSelectedGenre] = useState<string>("All");
     const [schedule, setSchedule] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
 
-    const genres = Array.from(
-        new Set(schedule.flatMap(item => item.show.genres))
-    );
-
+    const genres = Array.from(new Set(schedule.flatMap(item => item.show.genres)));
     const genreOptions = ["All", ...genres];
 
     useEffect(() => {
@@ -32,8 +30,6 @@ export default function Home() {
         }
     }, []);
 
-
-
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
         getSchedule("US", today)
@@ -41,8 +37,12 @@ export default function Home() {
             .catch(err => console.error(err));
     }, []);
 
+    const filteredSchedule = schedule.filter(item =>
+        searchQuery.trim() === "" || item.show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    );
+
     const genreMap: Record<string, any[]> = {};
-    schedule.forEach(item => {
+    filteredSchedule.forEach(item => {
         item.show.genres.forEach(genre => {
             if (!genreMap[genre]) genreMap[genre] = [];
             genreMap[genre].push(item);
@@ -64,7 +64,6 @@ export default function Home() {
                 </Modal>
             )}
 
-
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.navbar}>
@@ -74,35 +73,44 @@ export default function Home() {
                         <div className={styles.filter}>
                             <label htmlFor={"genre"}>Genre:</label>
                             <select
-                            id = "genre"
-                            value={selectedGenre}
-                            onChange={e => setSelectedGenre(e.target.value)}
+                                id="genre"
+                                value={selectedGenre}
+                                onChange={e => setSelectedGenre(e.target.value)}
                             >
                                 {genreOptions.map(genre => (
                                     <option key={genre} value={genre}>{genre}</option>
                                 ))}
                             </select>
-
                         </div>
                     </div>
 
                     <div className={styles.search}>
-                        <input type="search" />
-                        <button>Search</button>
+                        <input
+                            type="search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder={"Search shows"}
+                        />
+                        <button onClick={() => console.log("Searching for:", searchQuery)}>Search</button>
                     </div>
                 </div>
-
-                <h2>Today’s TV Schedule</h2>
 
                 {schedule.length === 0 ? (
                     <p>Loading shows...</p>
                 ) : (
                     <>
+                        {selectedGenre === "All" && (
+                            <div style={{ width: "100%", marginBottom: "1rem" }}>
+                                <h2>Today’s TV Schedule</h2>
+                            </div>
+                        )}
+
                         {Object.keys(genreMap)
                             .filter(genre => selectedGenre === "All" || genre === selectedGenre)
-                            .map(genre => (
-                                <div key={genre} style={{width: "100%"}}>
-                                    <h2>{genre}</h2>
+                            .map((genre) => (
+                                <div key={genre} style={{ width: "100%" }}>
+                                     <h3>{genre}</h3>
+
                                     <div className={selectedGenre === genre ? styles.fullRow : styles.row}>
                                         {genreMap[genre].map(item => (
                                             <ShowCard

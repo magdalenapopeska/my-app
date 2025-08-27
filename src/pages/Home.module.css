@@ -4,6 +4,7 @@
     align-items: stretch;
     width: 100%;
     box-sizing: border-box;
+    padding-top: 80px;
 }
 
 .grid {
