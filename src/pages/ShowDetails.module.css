@@ -1,0 +1,50 @@
+.container {
+    padding: 1rem;
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.episodeList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 800px;
+}
+
+.episodeItem {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease;
+}
+
+.episodeItem:hover {
+    background-color: red;
+}
+
+.episodeLabel {
+    font-weight: bold;
+}
+
+.episodeTitle {
+    margin-left: 0.3rem;
+    color: white;
+}
+
+.airDate {
+    font-style: italic;
+    color: #666;
+    margin-left: 0.3rem;
+}
+
+.noEpisodes {
+    font-style: italic;
+    color: #999;
+}

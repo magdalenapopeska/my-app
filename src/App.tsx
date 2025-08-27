@@ -7,18 +7,18 @@ import Account from "./pages/Account";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route path="/">
+        <>
             <Route
                 index
                 element={<Home key={sessionStorage.getItem("user") ? "logged" : "no-user"} />}
             />
             <Route path="watch-list" element={<WatchList />} />
-            <Route path="show-details" element={<ShowDetails />} />
+            <Route path="show-details/:id" element={<ShowDetails />} />
             <Route
                 path="account"
                 element={<Account  />}
             />
-        </Route>
+            </>
     )
 );
 

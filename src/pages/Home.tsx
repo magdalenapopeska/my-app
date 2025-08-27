@@ -115,6 +115,7 @@ export default function Home() {
                                         {genreMap[genre].map(item => (
                                             <ShowCard
                                                 key={item.id}
+                                                showId={item.show.id}
                                                 title={item.show.name}
                                                 imgUrl={item.show.image?.medium}
                                                 network={item.show.network?.name}
