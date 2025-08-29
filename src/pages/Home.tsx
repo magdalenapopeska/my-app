@@ -38,7 +38,8 @@ export default function Home() {
     }, []);
 
     const filteredSchedule = schedule.filter(item =>
-        searchQuery.trim() === "" || item.show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+        searchQuery.trim() === "" ||
+        item.show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
     );
 
     const genreMap: Record<string, any[]> = {};
@@ -97,6 +98,10 @@ export default function Home() {
 
                 {schedule.length === 0 ? (
                     <p>Loading shows...</p>
+                ) : filteredSchedule.length === 0 ? (
+                    <div className={styles.noShows}>
+                        <p>No shows to display</p>
+                    </div>
                 ) : (
                     <>
                         {selectedGenre === "All" && (
@@ -109,7 +114,7 @@ export default function Home() {
                             .filter(genre => selectedGenre === "All" || genre === selectedGenre)
                             .map((genre) => (
                                 <div key={genre} style={{ width: "100%" }}>
-                                     <h3>{genre}</h3>
+                                    <h3>{genre}</h3>
 
                                     <div className={selectedGenre === genre ? styles.fullRow : styles.row}>
                                         {genreMap[genre].map(item => (

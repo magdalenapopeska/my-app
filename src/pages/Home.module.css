@@ -106,3 +106,12 @@
 .search button:hover {
     background-color: #e03e3e;
 }
+
+.noShows {
+    color: dimgrey;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 20px;
+    margin-bottom: 100rem;
+    margin-left: 40rem;
+}
