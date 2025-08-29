@@ -5,7 +5,9 @@ import styles from './Home.module.css';
 import { Link, useNavigate } from "react-router-dom";
 import Modal from '../components/Modal';
 import EnteringName from '../pages/EnteringName';
-import { overlay } from '../components/Modal.module.css';
+import modalCss from '../components/Modal.module.css';
+
+const {overlay} = modalCss;
 
 type User = {
     name: string;
@@ -44,7 +46,7 @@ export default function Home() {
 
     const genreMap: Record<string, any[]> = {};
     filteredSchedule.forEach(item => {
-        item.show.genres.forEach(genre => {
+        item.show.genres.forEach((genre: string) => {
             if (!genreMap[genre]) genreMap[genre] = [];
             genreMap[genre].push(item);
         });
@@ -104,7 +106,7 @@ export default function Home() {
                     </div>
                 ) : (
                     <>
-                        {selectedGenre === "All" && (
+                        {selectedGenre === "All" && searchQuery.trim() === "" &&(
                             <div style={{ width: "100%", marginBottom: "1rem" }}>
                                 <h2>Today’s TV Schedule</h2>
                             </div>

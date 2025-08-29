@@ -50,7 +50,7 @@ const ShowDetails: React.FC = () => {
         fetchShow();
     }, [showId]);
 
-    if (loading) return <p className={styles.noEpisodes}>Loading show...</p>;
+    if (loading) return <p className={styles.noEpisodes}>Loading episodes...</p>;
     if (!show) return <p className={styles.noEpisodes}>Show not found.</p>;
 
     const episodes = show._embedded?.episodes || [];
