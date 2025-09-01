@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import styles from "./ShowCard.module.css";
 import {useEffect, useState} from "react";
 import {getWatchList} from "../utils/localStorage";
-import {addEpisodeToWatchlist} from "../utils/watchList";
 
 type ShowCardProps = {
     showId: number;
@@ -23,10 +22,6 @@ export default function ShowCard({showId, imgUrl, title, network, nextEpisode}: 
         }
     }, [showId]);
 
-    const handleAdd = (newStatus: "planned" | "watched") => {
-        addEpisodeToWatchlist({id: showId, name: title}, newStatus);
-        setStatus(newStatus);
-    }
 
     return (
         <div className={styles.cardWrapper}>
@@ -37,16 +32,6 @@ export default function ShowCard({showId, imgUrl, title, network, nextEpisode}: 
             {nextEpisode && <div className={styles.badge}>{nextEpisode}</div>}
         </Link>
 
-            <div className={styles.watchlistButtons}>
-                {status === "planned" && <p>Status: Planned</p>}
-                {status === "watched" && <p>Status: Watched</p>}
-                {!status && (
-                <>
-                    <button onClick={() => handleAdd("planned")}>Add to Planned</button>
-                    <button onClick={() => handleAdd("watched")}>Add to Watched</button>
-                </>
-            )}
-            </div>
         </div>
 
     );
