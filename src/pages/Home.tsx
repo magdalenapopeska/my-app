@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { getSchedule } from "../api/tvmaze";
 import ShowCard from "../components/ShowCard";
 import styles from './Home.module.css';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Modal from '../components/Modal';
 import EnteringName from '../pages/EnteringName';
 import modalCss from '../components/Modal.module.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+
 
 const {overlay} = modalCss;
 
@@ -20,16 +23,21 @@ export default function Home() {
     const [schedule, setSchedule] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const navigate = useNavigate();
+    const [user, setUser]  = useState<User | null>(null);
+    const [isDropdownOpen, setisDropdownOpen] = useState(false);
 
     const genres = Array.from(new Set(schedule.flatMap(item => item.show.genres)));
     const genreOptions = ["All", ...genres];
 
+
     useEffect(() => {
         const storedUser = sessionStorage.getItem("user");
-        if (!storedUser) {
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        } else {
             setIsModalOpen(true);
         }
+
     }, []);
 
     useEffect(() => {
@@ -54,8 +62,15 @@ export default function Home() {
 
     function handleUserSubmit(data: User) {
         sessionStorage.setItem("user", JSON.stringify(data));
+        setUser(data);
         setIsModalOpen(false);
-        navigate("/account");
+        setisDropdownOpen(false);
+    }
+
+    function logout() {
+        sessionStorage.removeItem('user');
+        setUser(null);
+        setIsModalOpen(true);
     }
 
     return (
@@ -70,7 +85,6 @@ export default function Home() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.navbar}>
-                        <Link to={'/account'}>Account</Link>
                         <Link to={'/watch-list'}>Watch List</Link>
 
                         <div className={styles.filter}>
@@ -95,8 +109,29 @@ export default function Home() {
                             placeholder={"Search shows"}
                         />
                         <button onClick={() => console.log("Searching for:", searchQuery)}>Search</button>
+                        {user && (
+                            <div className={styles.userWrapper}>
+                                <FontAwesomeIcon icon={faUser}
+                                                 onClick={() => setisDropdownOpen(!isDropdownOpen)}
+                                                 className={styles.userIcon}
+                                />
+                                {isDropdownOpen && (
+
+                                    <div className={styles.userDropdown}>
+                                        <p><strong>Name: {user.name}</strong></p>
+                                        <p><strong>Surname: {user.surname}</strong></p>
+                                        <p>Subscription: {user.subscription}</p>
+                                        <div className={styles.logout}>
+                                            <button onClick={logout}>Log Out</button>
+                                        </div>
+                                    </div>
+
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
+
 
                 {schedule.length === 0 ? (
                     <p>Loading shows...</p>
