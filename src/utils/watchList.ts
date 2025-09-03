@@ -1,27 +1,46 @@
-import { getWatchList as getLocalStorageList, saveWatchList as saveGlobalList} from "./localStorage";
-export const getWatchList = (username: string) => {
-    const data = localStorage.getItem(`watchList_${username}`);
-    return data ? JSON .parse(data) : [];
-};
+export function addEpisodeToWatchlist(
+    username: string,
+    show: { id: number; name: string; image?: { medium?: string } },
+    episode: { id: string; season?: number; number?: number; name?: string | null; airdate?: string | null },
+    status: "watched" | "planned"
+) {
+    const storageKey = `watchlist_${username}`;
+    const watchlist = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
-export const saveWatchList = (username: string, watchList: any[]) => {
-    localStorage.setItem(`watchList_${username}`, JSON.stringify(watchList));
-}
+    let showEntry = watchlist.find((s: any) => s.showId === show.id);
 
-export const addEpisodeToWatchlist = (username: string, episode: any, status: "planned" | "watched") => {
-    const watchlist = getWatchList(username);
-
-    const index = watchlist.findIndex((ep: any) => ep.id === episode.id);
-    if (index > -1) {
-        watchlist[index].status = status;
-    } else {
-        watchlist.push({ ...episode, status });
+    if (!showEntry) {
+        showEntry = {
+            showId: show.id,
+            name: show.name,
+            image: show.image?.medium,
+            episodes: [],
+        };
+        watchlist.push(showEntry);
     }
 
-    saveWatchList(username, watchlist);
-};
+    const existingEpisode = showEntry.episodes.find((e: any) => e.id === episode.id);
+    if (existingEpisode) {
+        existingEpisode.status = status;
+    } else {
+        showEntry.episodes.push({ ...episode, status });
+    }
 
-export const removeEpisodeFromWatchlist = (username: string, episodeId: number) => {
-    const watchlist = getWatchList(username).filter((ep: any) => ep.id !== episodeId);
-    saveWatchList(username, watchlist);
-};
+    showEntry.episodes = showEntry.episodes.filter((e: any) => e.status === "watched");
+
+    if (showEntry.episodes.length === 0) {
+        const idx = watchlist.findIndex((s: any) => s.showId === show.id);
+        if (idx > -1) watchlist.splice(idx, 1);
+    }
+
+    localStorage.setItem(storageKey, JSON.stringify(watchlist));
+}
+
+export function getWatchList(username: string) {
+    const storageKey = `watchlist_${username}`;
+    const watchlist = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+    return watchlist.filter(
+        (s: any) => s.episodes && s.episodes.some((e: any) => e.status === "watched")
+    );
+}

@@ -1,28 +1,31 @@
 import { useState, useEffect } from "react";
 import type { FC } from "react";
-import type {EpisodeSummary} from "../pages/ShowDetails";
-import {addEpisodeToWatchlist, getWatchList} from "../utils/watchList";
+import type { EpisodeSummary } from "../pages/ShowDetails";
+import { addEpisodeToWatchlist, getWatchList } from "../utils/watchList";
 import styles from "../pages/ShowDetails.module.css";
 
 type Props = {
     episode: EpisodeSummary;
     username: string;
-}
+    show: { id: number; name: string; image?: { medium?: string } };
+};
 
-const EpisodeItem: FC<Props> = ({episode, username}) => {
+const EpisodeItem: FC<Props> = ({ episode, username, show }) => {
     const [status, setStatus] = useState<"planned" | "watched" | null>(null);
 
     useEffect(() => {
-        const currentStatus = getWatchList(username).find((e:any) => e.id === episode.id)?.status;
-        setStatus(currentStatus ?? null);
-    }, [episode.id, username]);
+        const watchList = getWatchList(username);
+        const showEntry = watchList.find((s: any) => s.showId === show.id);
+        const currentStatus =
+            showEntry?.episodes.find((e: any) => e.id === episode.id)?.status ?? null;
+        setStatus(currentStatus);
+    }, [episode.id, username, show.id]);
 
     const handleAdd = (newStatus: "planned" | "watched") => {
         if (!username) return;
-        addEpisodeToWatchlist(username, episode, newStatus);
+        addEpisodeToWatchlist(username, show, episode, newStatus);
         setStatus(newStatus);
     };
-
 
     return (
         <li key={episode.id} className={styles.episodeItem}>
@@ -30,14 +33,22 @@ const EpisodeItem: FC<Props> = ({episode, username}) => {
                 S{episode.season}E{episode.number}:
             </span>{" "}
             <span className={styles.episodeTitle}>
-                {episode.name && !/^Episode\s\d+$/.test(episode.name) && episode.name.trim() !== ""
+                {episode.name &&
+                !/^Episode\s\d+$/.test(episode.name) &&
+                episode.name.trim() !== ""
                     ? episode.name
                     : ""}
             </span>
-            {episode.airdate && <span className={styles.airDate}>({episode.airdate})</span>}
-
+            {episode.airdate && (
+                <span className={styles.airDate}>({episode.airdate})</span>
+            )}
             <div className={styles.watchlistButtons}>
-                {status === "planned" && <p>Status: Planned</p>}
+                {status === "planned" && (
+                    <>
+                        <p>Status: Planned</p>
+                        <button onClick={() => handleAdd("watched")}>Mark as Watched</button>
+                    </>
+                )}
                 {status === "watched" && <p>Status: Watched</p>}
                 {!status && (
                     <>
@@ -47,7 +58,7 @@ const EpisodeItem: FC<Props> = ({episode, username}) => {
                 )}
             </div>
         </li>
-    )
-}
+    );
+};
 
 export default EpisodeItem;

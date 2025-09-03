@@ -53,3 +53,58 @@
     padding: 10px;
     width: 7%;
 }
+
+h1{
+    color: dimgrey;
+    font-weight: lighter;
+}
+
+
+.form {
+    background-color: black;
+    padding-left: 595px;
+    width: 20rem;
+
+}
+
+.form label {
+    display: block;
+    margin-bottom: 0.05rem;
+    color: red;
+    font-weight: bold;
+}
+
+.form input,
+.form textarea {
+    display: block;
+    width: 100%;
+    font: inherit;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: darkgrey;
+    color: red;
+}
+
+.subscriptions {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: 2px;
+    border-radius: 8px;
+    background-color: black;
+    color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.subscriptions:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
+.subscriptions:focus {
+    outline: none;
+}

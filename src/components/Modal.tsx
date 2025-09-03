@@ -1,6 +1,5 @@
 import classes from './Modal.module.css';
-// @ts-ignore
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type ModalProps = {
     children: ReactNode;
@@ -11,9 +10,9 @@ export default function Modal({ children, onClose }: ModalProps) {
     return (
         <>
             <div className={classes.backdrop} onClick={onClose} />
-            <dialog open className={classes.modal}>
+            <div className={classes.modal} onClick={e => e.stopPropagation()}>
                 {children}
-            </dialog>
+            </div>
         </>
     );
 }

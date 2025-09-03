@@ -1,34 +1,32 @@
 import React from "react";
 import classes from './EnteringName.module.css';
 
-type EnteringNameProps = {
-    onSubmitName: (data: { name: string; surname: string; subscription: "Monthly" | "Yearly" }) => void;
+type UserForm = {
+    name: string;
+    surname: string;
+    subscription: "Monthly" | "Yearly";
+};
 
+type EnteringNameProps = {
+    onSubmitName: (data: UserForm) => void;
 };
 
 export default function EnteringName({ onSubmitName }: EnteringNameProps) {
-    function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
 
         const name = formData.get("yourName") as string;
         const surname = formData.get("yourSurname") as string;
-        const rawSubscription = formData.get("subscription");
+        const subscription = formData.get("subscription") as "Monthly" | "Yearly";
 
-        let subscription: "Monthly" | "Yearly";
-        if (rawSubscription === "Monthly" || rawSubscription === "Yearly") {
-            subscription = rawSubscription;
-        } else {
-            throw new Error("Invalid subscription value");
-        }
+        if (!name || !surname || !subscription) return;
 
         onSubmitName({ name, surname, subscription });
     }
 
-
-
     return (
-        <form onSubmit={submitHandler}>
+        <form onSubmit={handleSubmit}>
             <div className={classes.form}>
                 <p>
                     <label htmlFor="name">Your name</label>
@@ -38,24 +36,17 @@ export default function EnteringName({ onSubmitName }: EnteringNameProps) {
                     <label htmlFor="surname">Your surname</label>
                     <input type="text" id="surname" name="yourSurname" required />
                 </p>
-
-                    <p>
-                        <label htmlFor="subscription">Your subscription</label><br />
-                            <select className={classes.subscription} id="subscription" name="subscription" required>
-                                <option value="Monthly">Monthly</option>
-                                <option value="Yearly">Yearly</option>
-                            </select>
-
-                    </p>
-
+                <p>
+                    <label htmlFor="subscription">Your subscription</label><br />
+                    <select className={classes.subscription} id="subscription" name="subscription" required>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                </p>
                 <div className={classes.actions}>
-                    <button>Save</button>
+                    <button type="submit">Save</button>
                 </div>
-
             </div>
-
         </form>
     );
 }
-
-

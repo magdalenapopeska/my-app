@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getShowDetails } from "../api/tvmaze"; // make sure the path is correct
+import { getShowDetails } from "../api/tvmaze";
 import styles from "./ShowDetails.module.css";
 import classes from "./Account.module.css";
 import EpisodeItem from "../components/EpisodeItem";
@@ -20,7 +20,7 @@ export type EpisodeSummary = {
     number?: number;
     name?: string | null;
     airdate?: string | null;
-}
+};
 
 type Show = {
     id: number;
@@ -32,15 +32,15 @@ type Show = {
     };
 };
 
-function mapEpisode(ep:Episode, showId: number):EpisodeSummary{
+function mapEpisode(ep: Episode, showId: number): EpisodeSummary {
     return {
         id: String(ep.id),
         showId: String(showId),
         season: ep.season,
         number: ep.number,
         name: ep.name,
-        airdate: ep.airdate
-    }
+        airdate: ep.airdate,
+    };
 }
 
 const ShowDetails: React.FC = () => {
@@ -52,8 +52,10 @@ const ShowDetails: React.FC = () => {
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
 
     const storedUser = sessionStorage.getItem("user");
-    const user = storedUser ? JSON.parse(storedUser):null;
-    const username = user ? `${user.name}_${user.surname}_${user.subscription}` : null;
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    const username = parsedUser
+        ? `${parsedUser.name}_${parsedUser.surname}_${parsedUser.subscription}`
+        : null;
 
     useEffect(() => {
         const fetchShow = async () => {
@@ -74,7 +76,6 @@ const ShowDetails: React.FC = () => {
         };
         fetchShow();
     }, [showId]);
-
 
     if (loading) return <p className={styles.noEpisodes}>Loading episodes...</p>;
     if (!show) return <p className={styles.noEpisodes}>Show not found.</p>;
@@ -131,14 +132,20 @@ const ShowDetails: React.FC = () => {
                                     const mapped = mapEpisode(ep, showId);
 
                                     return username ? (
-                                       <EpisodeItem key={mapped.id} episode={mapped} username={username}/>
+                                        <EpisodeItem key={mapped.id}
+                                                     episode={mapped}
+                                                     username={username}
+                                                     show={{
+                                                         id: show.id,
+                                                         name: show.name,
+                                                         image: show.image ? { medium: show.image.medium } : undefined
+                                                     }}
+                                        />
                                     ) : (
                                         <li key={mapped.id}>
                                             <span>Please log in</span>
                                         </li>
-                                    )
-                                        ;
-
+                                    );
                                 })}
                         </ul>
                     </>
@@ -148,7 +155,8 @@ const ShowDetails: React.FC = () => {
             </div>
         </>
     );
-
 };
 
 export default ShowDetails;
+
+

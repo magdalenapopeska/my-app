@@ -127,6 +127,7 @@
 .userIcon {
     font-size: 1.5rem;
     transition: color 0.2s;
+    padding-top: 4px;
 }
 
 .userIcon:hover {
@@ -134,16 +135,17 @@
 }
 
 .userDropdown {
+    margin-top: 20px;
+    padding-top: 20px;
     position: absolute;
     top: 100%;
     right: 0;
     background: black;
     border: 1px solid dimgrey;
-    padding: 10px 5px;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    min-width: 180px;
-    min-height: 250px;
+    min-width: 190px;
+    min-height: 260px;
     z-index: 1000;
 }
 
@@ -151,21 +153,41 @@
     margin: 0.25rem 0;
     font-size: 0.9rem;
     color: dimgrey;
-    padding: 20px;
+    padding: 10px 20px;
 }
 
 
 .logout button {
-    padding: 6px 12px;
     border-radius: 4px;
     border: none;
-    color: white;
+    color: dimgrey;
+    font-weight: normal;
     cursor: pointer;
-    background-color: #888888;
+    background-color: black;
 }
 .logout button:hover{
-    background-color: dimgrey;
+    color: red;
+    background-color: black;
 }
 .logout {
-    padding: 15px 5px;
+    padding: 10px 50px;
+}
+
+
+.edit a{
+    border-radius: 4px;
+    border: none;
+    color: dimgrey;
+    font-weight: normal;
+    cursor: pointer;
+    background-color: black;
+    padding: 7px 55px;
+}
+.edit a:hover{
+    color: red;
+    background-color: black;
+}
+
+.edit {
+    margin-top: 30px;
 }

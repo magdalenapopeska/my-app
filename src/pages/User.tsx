@@ -11,8 +11,4 @@ function User() {
 }
 
 export default User;
-export async function loader (){
-    const response = await fetch('http://localhost:8080/posts');
-    const restData = await response.json();
-    return restData.posts;
-}
+

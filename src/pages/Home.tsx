@@ -47,16 +47,29 @@ export default function Home() {
             .catch(err => console.error(err));
     }, []);
 
-    const filteredSchedule = schedule.filter(item =>
-        searchQuery.trim() === "" ||
-        item.show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    const normalizedSchedule = schedule.map((item: any) => ({
+        id: item.show.id,
+        name: item.show.name,
+        image: item.show.image,
+        network: item.show.network,
+        genres: item.show.genres,
+    }));
+
+    const uniqueSchedule = Array.from(
+        new Map(normalizedSchedule.map(show => [show.id, show])).values()
     );
 
+    const filteredSchedule = uniqueSchedule.filter(show =>
+        searchQuery.trim() === "" ||
+        show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    );
+
+
     const genreMap: Record<string, any[]> = {};
-    filteredSchedule.forEach(item => {
-        item.show.genres.forEach((genre: string) => {
+    filteredSchedule.forEach(show => {
+        show.genres.forEach((genre: string) => {
             if (!genreMap[genre]) genreMap[genre] = [];
-            genreMap[genre].push(item);
+            genreMap[genre].push(show);
         });
     });
 
@@ -121,6 +134,9 @@ export default function Home() {
                                         <p><strong>Name: {user.name}</strong></p>
                                         <p><strong>Surname: {user.surname}</strong></p>
                                         <p>Subscription: {user.subscription}</p>
+                                        <div className={styles.edit}>
+                                            <Link to={"/account"}>Edit Profile</Link>
+                                        </div>
                                         <div className={styles.logout}>
                                             <button onClick={logout}>Log Out</button>
                                         </div>
@@ -154,13 +170,15 @@ export default function Home() {
                                     <h3>{genre}</h3>
 
                                     <div className={selectedGenre === genre ? styles.fullRow : styles.row}>
-                                        {genreMap[genre].map(item => (
+                                        {genreMap[genre].map(show => (
                                             <ShowCard
-                                                key={item.id}
-                                                showId={item.show.id}
-                                                title={item.show.name}
-                                                imgUrl={item.show.image?.medium}
-                                                network={item.show.network?.name}
+                                                key={show.id}
+                                                showId={show.id}
+                                                title={show.name}
+                                                imgUrl={show.image?.medium}
+                                                network={show.network?.name}
+                                                username={user ? `${user.name}_${user.surname}_${user.subscription}` : undefined}
+                                                showStatus={false}
                                             />
                                         ))}
                                     </div>
