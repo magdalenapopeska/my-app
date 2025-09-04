@@ -14,3 +14,30 @@
     background-color: #ff4c4c;
     transform: translateY(-2px);
 }
+
+.genreSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.genreBlock {
+    padding: 1rem;
+}
+
+.genreTitle {
+    margin-bottom: 1rem;
+    padding-left: 30px;
+}
+
+.watchListGrid {
+    display: flex;
+    overflow-x: auto;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    padding-left: 30px;
+}
+
+.title h2{
+    padding-left: 30px;
+}

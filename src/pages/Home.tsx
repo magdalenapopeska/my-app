@@ -158,7 +158,7 @@ export default function Home() {
                 ) : (
                     <>
                         {selectedGenre === "All" && searchQuery.trim() === "" &&(
-                            <div style={{ width: "100%", marginBottom: "1rem" }}>
+                            <div style={{ width: "100%", paddingLeft: "25px" }}>
                                 <h2>Today’s TV Schedule</h2>
                             </div>
                         )}
@@ -166,7 +166,7 @@ export default function Home() {
                         {Object.keys(genreMap)
                             .filter(genre => selectedGenre === "All" || genre === selectedGenre)
                             .map((genre) => (
-                                <div key={genre} style={{ width: "100%" }}>
+                                <div key={genre} style={{ width: "100%", paddingLeft: "30px" }}>
                                     <h3>{genre}</h3>
 
                                     <div className={selectedGenre === genre ? styles.fullRow : styles.row}>

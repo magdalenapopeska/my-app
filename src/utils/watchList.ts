@@ -1,8 +1,9 @@
-export function addEpisodeToWatchlist(
+export async function addEpisodeToWatchlist(
     username: string,
-    show: { id: number; name: string; image?: { medium?: string } },
+    show: { id: number; name: string; image?: { medium?: string }; genres?: string[]; },
     episode: { id: string; season?: number; number?: number; name?: string | null; airdate?: string | null },
-    status: "watched" | "planned"
+    status: "watched" | "planned",
+
 ) {
     const storageKey = `watchlist_${username}`;
     const watchlist = JSON.parse(localStorage.getItem(storageKey) || "[]");
@@ -10,10 +11,17 @@ export function addEpisodeToWatchlist(
     let showEntry = watchlist.find((s: any) => s.showId === show.id);
 
     if (!showEntry) {
+        let genres = show.genres ?? [];
+        if(genres.length === 0){
+            const res = await fetch(`https://api.tvmaze.com/shows/${show.id}`);
+            const fullShow = await res.json();
+            genres = fullShow.genres ?? [];
+        }
         showEntry = {
             showId: show.id,
             name: show.name,
             image: show.image?.medium,
+            genres,
             episodes: [],
         };
         watchlist.push(showEntry);
