@@ -1,0 +1,23 @@
+{
+  "name": "Name",
+  "surname": "Nachname",
+  "subscription": "Abonnement",
+  "watchList": "Beobachtungsliste",
+  "genre": "Genre",
+  "searchShows": "Serien suchen",
+  "search": "Suchen",
+  "loading": "Serien werden geladen...",
+  "noShows": "Keine Serien verfügbar",
+  "todaysSchedule": "Heutiges TV-Programm",
+  "editProfile": "Profil bearbeiten",
+  "logout": "Abmelden",
+  "backToHome": "Zurück zur Übersicht",
+  "yourWatchList": "Deine Beobachtungsliste",
+  "editYourProfile": "Dein Profil bearbeiten",
+  "yourName": "Dein name",
+  "yourSurname": "Dein nachname",
+  "yourSubscription": "Dein abonnement",
+  "monthly": "Monatlich",
+  "yearly": "Jährlich",
+  "save": "Speichern"
+}

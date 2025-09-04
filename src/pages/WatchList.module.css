@@ -40,4 +40,19 @@
 
 .title h2{
     padding-left: 30px;
+    padding-top: 100px;
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1c1c1c;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 20px;
 }

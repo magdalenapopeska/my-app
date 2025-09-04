@@ -3,6 +3,9 @@ import ShowCard from "../components/ShowCard";
 import classes from "./WatchList.module.css";
 import { getWatchList } from "../utils/watchList";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+import ReactCountryFlag from "react-country-flag";
 
 export default function WatchList() {
     const storedUser = sessionStorage.getItem("user");
@@ -12,6 +15,9 @@ export default function WatchList() {
         : null;
 
     const [enrichedShows, setEnrichedShows] = useState<any[]>([]);
+
+    const { t } = useTranslation();
+
 
     useEffect(() => {
         async function enrichWatchlist() {
@@ -52,14 +58,36 @@ export default function WatchList() {
         });
     });
 
+    function toggleLanguage() {
+        const newLang = i18n.language === "en" ? "de" : "en";
+        i18n.changeLanguage(newLang);
+    }
+
+
+
     return (
         <>
+            <div className={classes.header}>
+
             <div className={classes.backHome}>
-                <Link to="/">Back to Home</Link>
+                <Link to="/">{t("backToHome")}</Link>
+            </div>
+
+            <div
+                onClick={toggleLanguage}
+                style={{ cursor: "pointer", marginLeft: "10px", fontSize: "22px" }}
+            >
+                {i18n.language === "en" ? (
+                    <ReactCountryFlag countryCode="DE" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
+                ) : (
+                    <ReactCountryFlag countryCode="GB" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
+                )}
+            </div>
+
             </div>
 
             <div className={classes.title}>
-                <h2>Your Watch List</h2>
+                <h2>{t("yourWatchList")}</h2>
             </div>
 
             <div className={classes.genreSection}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getSchedule } from "../api/tvmaze";
+import { getSchedule, searchShows } from "../api/tvmaze";
 import ShowCard from "../components/ShowCard";
 import styles from './Home.module.css';
 import { Link } from "react-router-dom";
@@ -8,9 +8,11 @@ import EnteringName from '../pages/EnteringName';
 import modalCss from '../components/Modal.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+import ReactCountryFlag from "react-country-flag";
 
-
-const {overlay} = modalCss;
+const { overlay } = modalCss;
 
 type User = {
     name: string;
@@ -23,12 +25,11 @@ export default function Home() {
     const [schedule, setSchedule] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [user, setUser]  = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [isDropdownOpen, setisDropdownOpen] = useState(false);
+    const [searchResults, setSearchResults] = useState<any[]>([]);
 
-    const genres = Array.from(new Set(schedule.flatMap(item => item.show.genres)));
-    const genreOptions = ["All", ...genres];
-
+    const { t } = useTranslation();
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem("user");
@@ -37,7 +38,6 @@ export default function Home() {
         } else {
             setIsModalOpen(true);
         }
-
     }, []);
 
     useEffect(() => {
@@ -46,6 +46,24 @@ export default function Home() {
             .then(res => setSchedule(res.data))
             .catch(err => console.error(err));
     }, []);
+
+    useEffect(() => {
+        const delayDebounce = setTimeout(async () => {
+            if (!searchQuery.trim()) {
+                setSearchResults([]);
+                return;
+            }
+            try {
+                const res = await searchShows(searchQuery);
+                const results = res.data.map((item: any) => item.show);
+                setSearchResults(results);
+            } catch (err) {
+                console.error("Error searching shows:", err);
+            }
+        }, 500);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchQuery]);
 
     const normalizedSchedule = schedule.map((item: any) => ({
         id: item.show.id,
@@ -59,19 +77,50 @@ export default function Home() {
         new Map(normalizedSchedule.map(show => [show.id, show])).values()
     );
 
-    const filteredSchedule = uniqueSchedule.filter(show =>
-        searchQuery.trim() === "" ||
-        show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    const normalizedSearchResults = searchResults.map((show: any) => ({
+        id: show.id,
+        name: show.name,
+        image: show.image,
+        network: show.network,
+        genres: show.genres || [],
+    }));
+
+    const activeData = searchQuery.trim()
+        ? Array.from(
+            new Map(
+                [
+                    ...normalizedSearchResults,
+                    ...uniqueSchedule.filter(show =>
+                        show.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+                    )
+                ].map(show => [show.id, show])
+            ).values()
+        )
+        : uniqueSchedule;
+
+    const filteredShows = activeData.filter(show =>
+        selectedGenre === "All" || show.genres.includes(selectedGenre)
     );
 
-
     const genreMap: Record<string, any[]> = {};
-    filteredSchedule.forEach(show => {
-        show.genres.forEach((genre: string) => {
-            if (!genreMap[genre]) genreMap[genre] = [];
-            genreMap[genre].push(show);
-        });
+    filteredShows.forEach(show => {
+        if (show.genres.length === 0) {
+            if (searchQuery.trim()) {
+                if (!genreMap["Other"]) genreMap["Other"] = [];
+                genreMap["Other"].push(show);
+            }
+        } else {
+            show.genres.forEach((genre: string) => {
+                if (!genreMap[genre]) genreMap[genre] = [];
+                genreMap[genre].push(show);
+            });
+        }
     });
+
+    const genreOptions = [
+        "All",
+        ...Array.from(new Set(activeData.flatMap(show => show.genres))),
+    ];
 
     function handleUserSubmit(data: User) {
         sessionStorage.setItem("user", JSON.stringify(data));
@@ -86,6 +135,11 @@ export default function Home() {
         setIsModalOpen(true);
     }
 
+    function toggleLanguage() {
+        const newLang = i18n.language === "en" ? "de" : "en";
+        i18n.changeLanguage(newLang);
+    }
+
     return (
         <>
             {isModalOpen && <div className={overlay} />}
@@ -98,10 +152,10 @@ export default function Home() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.navbar}>
-                        <Link to={'/watch-list'}>Watch List</Link>
+                        <Link to={'/watch-list'}>{t("watchList")}</Link>
 
                         <div className={styles.filter}>
-                            <label htmlFor={"genre"}>Genre:</label>
+                            <label htmlFor={"genre"}>{t("genre")}:</label>
                             <select
                                 id="genre"
                                 value={selectedGenre}
@@ -119,47 +173,55 @@ export default function Home() {
                             type="search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder={"Search shows"}
+                            placeholder={t("searchShows")}
                         />
-                        <button onClick={() => console.log("Searching for:", searchQuery)}>Search</button>
+
                         {user && (
                             <div className={styles.userWrapper}>
-                                <FontAwesomeIcon icon={faUser}
-                                                 onClick={() => setisDropdownOpen(!isDropdownOpen)}
-                                                 className={styles.userIcon}
+                                <FontAwesomeIcon
+                                    icon={faUser}
+                                    onClick={() => setisDropdownOpen(!isDropdownOpen)}
+                                    className={styles.userIcon}
                                 />
-                                {isDropdownOpen && (
 
+                                {isDropdownOpen && (
                                     <div className={styles.userDropdown}>
-                                        <p><strong>Name: {user.name}</strong></p>
-                                        <p><strong>Surname: {user.surname}</strong></p>
-                                        <p>Subscription: {user.subscription}</p>
+                                        <p><strong>{t("name")}: {user.name}</strong></p>
+                                        <p><strong>{t("surname")}: {user.surname}</strong></p>
+                                        <p>{t("subscription")}: {user.subscription}</p>
                                         <div className={styles.edit}>
-                                            <Link to={"/account"}>Edit Profile</Link>
+                                            <Link to={"/account"}>{t("editProfile")}</Link>
                                         </div>
                                         <div className={styles.logout}>
-                                            <button onClick={logout}>Log Out</button>
+                                            <button onClick={logout}>{t("logout")}</button>
                                         </div>
                                     </div>
-
                                 )}
                             </div>
                         )}
+
+                        <div
+                            onClick={toggleLanguage}
+                            style={{ cursor: "pointer", marginLeft: "10px", fontSize: "22px" }}
+                        >
+                            {i18n.language === "en" ? (
+                                <ReactCountryFlag countryCode="DE" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
+                            ) : (
+                                <ReactCountryFlag countryCode="GB" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
+                            )}
+                        </div>
                     </div>
                 </div>
 
-
-                {schedule.length === 0 ? (
-                    <p>Loading shows...</p>
-                ) : filteredSchedule.length === 0 ? (
+                {activeData.length === 0 ? (
                     <div className={styles.noShows}>
-                        <p>No shows to display</p>
+                        <p>{t("noShows")}</p>
                     </div>
                 ) : (
                     <>
-                        {selectedGenre === "All" && searchQuery.trim() === "" &&(
+                        {searchQuery.trim() === "" && selectedGenre === "All" && (
                             <div style={{ width: "100%", paddingLeft: "25px" }}>
-                                <h2>Today’s TV Schedule</h2>
+                                <h2>{t("todaysSchedule")}</h2>
                             </div>
                         )}
 
@@ -168,7 +230,6 @@ export default function Home() {
                             .map((genre) => (
                                 <div key={genre} style={{ width: "100%", paddingLeft: "30px" }}>
                                     <h3>{genre}</h3>
-
                                     <div className={selectedGenre === genre ? styles.fullRow : styles.row}>
                                         {genreMap[genre].map(show => (
                                             <ShowCard

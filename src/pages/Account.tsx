@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from './Account.module.css';
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+import ReactCountryFlag from "react-country-flag";
+
 type UserData = {
     name: string;
     surname: string;
@@ -12,6 +16,9 @@ export default function Account() {
     const storedUser = sessionStorage.getItem('user');
     const initialUser: UserData | null = storedUser ? JSON.parse(storedUser) : null;
     const [user, setUser] = useState<UserData | null>(initialUser);
+
+    const { t } = useTranslation();
+
     if (!user) return <p>No user logged in</p>;
     function logout() {
         sessionStorage.removeItem('user');
@@ -47,18 +54,43 @@ export default function Account() {
         handleSubmit({ name, surname, subscription });
     }
 
+    function toggleLanguage() {
+        const newLang = i18n.language === "en" ? "de" : "en";
+        i18n.changeLanguage(newLang);
+    }
+
     return (
         <>
+            <div className={classes.header}>
+
+            <div className={classes.navbar}>
+
             <div className={classes.buttons}>
                 <div className={classes.backHome}>
-                    <a href="/">Back to Home</a>
+                    <a href="/">{t("backToHome")}</a>
                 </div>
                 <div className={classes.logout}>
-                    <button onClick={logout}>Log Out</button>
+                    <button onClick={logout}>{t("logout")}</button>
                 </div>
             </div>
+
+            </div>
+
+            <div
+                onClick={toggleLanguage}
+                style={{ cursor: "pointer", marginLeft: "10px", fontSize: "22px", gap: "10px" }}
+            >
+                {i18n.language === "en" ? (
+                    <ReactCountryFlag countryCode="DE" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
+                ) : (
+                    <ReactCountryFlag countryCode="GB" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
+                )}
+            </div>
+
+            </div>
+
             <div className={classes.container}>
-                <h1>Edit your profile</h1>
+                <h1>{t("editYourProfile")}</h1>
                 <div className={classes.image}>
                     <img
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSez5Hhwz8qtjcctv1WFL6Td8NVdHUtSw12hw&s"
@@ -68,7 +100,7 @@ export default function Account() {
                 <form onSubmit={handleFormSubmit}>
                     <div className={classes.form}>
                         <p>
-                            <label htmlFor="name">Your name</label>
+                            <label htmlFor="name">{t("yourName")}</label>
                             <input
                                 type="text"
                                 id="name"
@@ -78,7 +110,7 @@ export default function Account() {
                             />
                         </p>
                         <p>
-                            <label htmlFor="surname">Your surname</label>
+                            <label htmlFor="surname">{t("yourSurname")}</label>
                             <input
                                 type="text"
                                 id="surname"
@@ -88,7 +120,7 @@ export default function Account() {
                             />
                         </p>
                         <p>
-                            <label htmlFor="subscription">Your subscription</label><br />
+                            <label htmlFor="subscription">{t("yourSubscription")}</label><br />
                             <select
                                 className={classes.subscriptions}
                                 id="subscription"
@@ -96,12 +128,12 @@ export default function Account() {
                                 defaultValue={user.subscription}
                                 required
                             >
-                                <option value="Monthly">Monthly</option>
-                                <option value="Yearly">Yearly</option>
+                                <option value="Monthly">{t("monthly")}</option>
+                                <option value="Yearly">{t("yearly")}</option>
                             </select>
                         </p>
                         <div className={classes.logout}>
-                            <button>Save</button>
+                            <button>{t("save")}</button>
                         </div>
                     </div>
                 </form>

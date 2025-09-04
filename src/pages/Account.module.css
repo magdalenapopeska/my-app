@@ -1,13 +1,13 @@
 .container {
     display: flex;
     flex-direction: column;
-    min-height: 655px;
+    min-height: 725px;
     width: 100vw;
     text-align: center;
     background-color: black;
     color: white;
     box-sizing: border-box;
-    padding: 20px;
+    padding-top: 80px;
 }
 
 
@@ -107,4 +107,38 @@ h1{
 
 .subscriptions:focus {
     outline: none;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.navbar a:hover {
+    background-color: #ff4c4c;
+    transform: translateY(-2px);
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1c1c1c;
+    width: 100%;
+    box-sizing: border-box;
 }

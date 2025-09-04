@@ -1,0 +1,23 @@
+{
+  "name": "Name",
+  "surname": "Surname",
+  "subscription": "Subscription",
+  "watchList": "Watch List",
+  "genre": "Genre",
+  "searchShows": "Search shows",
+  "search": "Search",
+  "loading": "Loading shows...",
+  "noShows": "No shows to display",
+  "todaysSchedule": "Today’s TV Schedule",
+  "editProfile": "Edit Profile",
+  "logout": "Log Out",
+  "backToHome": "Back to Home",
+  "yourWatchList": "Your Watch List",
+  "editYourProfile": "Edit Your Profile",
+  "yourName": "Your name",
+  "yourSurname": "Your surname",
+  "yourSubscription": "Your subscription",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "save": "Save"
+}

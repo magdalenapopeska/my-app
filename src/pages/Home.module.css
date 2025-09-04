@@ -143,8 +143,8 @@
     border: 1px solid dimgrey;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    min-width: 190px;
-    min-height: 260px;
+    min-width: 240px;
+    min-height: 280px;
     z-index: 1000;
 }
 
