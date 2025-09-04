@@ -19,5 +19,8 @@
   "yourSubscription": "Your subscription",
   "monthly": "Monthly",
   "yearly": "Yearly",
-  "save": "Save"
+  "save": "Save",
+  "all": "All",
+  "watched": "Watched",
+  "planned": "Planned"
 }

@@ -10,11 +10,13 @@ import ReactCountryFlag from "react-country-flag";
 export default function WatchList() {
     const storedUser = sessionStorage.getItem("user");
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+
     const username = parsedUser
         ? `${parsedUser.name}_${parsedUser.surname}_${parsedUser.subscription}`
         : null;
 
     const [enrichedShows, setEnrichedShows] = useState<any[]>([]);
+    const [filter, setFilter] = useState<"all" | "watched" | "planned">("all");
 
     const { t } = useTranslation();
 
@@ -48,8 +50,13 @@ export default function WatchList() {
         enrichWatchlist();
     }, [username]);
 
+    const filteredShows = enrichedShows.filter(show => {
+        if (filter === "all") return true;
+        return show.episodes?.some((e: any) => e.status === filter);
+    });
+
     const showsByGenre: Record<string, any[]> = {};
-    enrichedShows.forEach((show: any) => {
+    filteredShows.forEach((show: any) => {
         (show.genres ?? ["Other"]).forEach((genre: string) => {
             if (!showsByGenre[genre]) {
                 showsByGenre[genre] = [];
@@ -63,16 +70,28 @@ export default function WatchList() {
         i18n.changeLanguage(newLang);
     }
 
-
-
     return (
         <>
-            <div className={classes.header}>
+            <div className={classes.container}>
+                <div className={classes.header}>
+                    <div className={classes.navbar}>
 
             <div className={classes.backHome}>
                 <Link to="/">{t("backToHome")}</Link>
             </div>
 
+                <div className={classes.filter}>
+                    <select
+                        id="status"
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value as any)}
+                    >
+                        <option value="all">{t("all")}</option>
+                        <option value="watched">{t("watched")}</option>
+                        <option value="planned">{t("planned")}</option>
+                    </select>
+                </div>
+                    </div>
             <div
                 onClick={toggleLanguage}
                 style={{ cursor: "pointer", marginLeft: "10px", fontSize: "22px" }}
@@ -89,6 +108,8 @@ export default function WatchList() {
             <div className={classes.title}>
                 <h2>{t("yourWatchList")}</h2>
             </div>
+
+
 
             <div className={classes.genreSection}>
                 {Object.entries(showsByGenre).map(([genre, shows]) => (
@@ -107,6 +128,7 @@ export default function WatchList() {
                         </div>
                     </div>
                 ))}
+            </div>
             </div>
         </>
     );

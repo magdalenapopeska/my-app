@@ -3,7 +3,6 @@ export async function addEpisodeToWatchlist(
     show: { id: number; name: string; image?: { medium?: string }; genres?: string[]; },
     episode: { id: string; season?: number; number?: number; name?: string | null; airdate?: string | null },
     status: "watched" | "planned",
-
 ) {
     const storageKey = `watchlist_${username}`;
     const watchlist = JSON.parse(localStorage.getItem(storageKey) || "[]");
@@ -12,11 +11,16 @@ export async function addEpisodeToWatchlist(
 
     if (!showEntry) {
         let genres = show.genres ?? [];
-        if(genres.length === 0){
-            const res = await fetch(`https://api.tvmaze.com/shows/${show.id}`);
-            const fullShow = await res.json();
-            genres = fullShow.genres ?? [];
+        if (genres.length === 0) {
+            try {
+                const res = await fetch(`https://api.tvmaze.com/shows/${show.id}`);
+                const fullShow = await res.json();
+                genres = fullShow.genres ?? [];
+            } catch (err) {
+                console.error("Failed to fetch genres:", err);
+            }
         }
+
         showEntry = {
             showId: show.id,
             name: show.name,
@@ -34,8 +38,6 @@ export async function addEpisodeToWatchlist(
         showEntry.episodes.push({ ...episode, status });
     }
 
-    showEntry.episodes = showEntry.episodes.filter((e: any) => e.status === "watched");
-
     if (showEntry.episodes.length === 0) {
         const idx = watchlist.findIndex((s: any) => s.showId === show.id);
         if (idx > -1) watchlist.splice(idx, 1);
@@ -49,6 +51,6 @@ export function getWatchList(username: string) {
     const watchlist = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
     return watchlist.filter(
-        (s: any) => s.episodes && s.episodes.some((e: any) => e.status === "watched")
+        (s: any) => s.episodes && s.episodes.length > 0
     );
 }
