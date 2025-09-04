@@ -50,12 +50,20 @@ const ShowDetails: React.FC = () => {
     const [show, setShow] = useState<Show | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
+    const [episodeFilter, setEpisodeFilter] = useState<"all" | "watched" | "unwatched">("all");
 
     const storedUser = sessionStorage.getItem("user");
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     const username = parsedUser
         ? `${parsedUser.name}_${parsedUser.surname}_${parsedUser.subscription}`
         : null;
+
+    const [watchlist, setWatchlist] = useState<any[]>([]);
+    useEffect(() => {
+        if (!username) return;
+        const raw = localStorage.getItem(`watchlist_${username}`);
+        setWatchlist(raw ? JSON.parse(raw) : []);
+    }, [username]);
 
     useEffect(() => {
         const fetchShow = async () => {
@@ -92,6 +100,19 @@ const ShowDetails: React.FC = () => {
         .map(Number)
         .sort((a, b) => a - b);
 
+    const filteredEpisodes =
+        selectedSeason && episodesBySeason[selectedSeason]
+            ? episodesBySeason[selectedSeason].filter((ep) => {
+                const showEntry = watchlist.find((s: any) => s.showId === show.id);
+                const epStatus = showEntry?.episodes.find((e: any) => String(e.id) === String(ep.id))?.status;
+
+                if (episodeFilter === "all") return true;
+                if (episodeFilter === "watched") return epStatus === "watched";
+                if (episodeFilter === "unwatched") return !epStatus || epStatus !== "watched";
+                return true;
+            })
+            : [];
+
     return (
         <>
             <div className={classes.backHome}>
@@ -126,27 +147,41 @@ const ShowDetails: React.FC = () => {
                             </select>
                         </div>
 
-                        <ul className={styles.episodeList}>
-                            {selectedSeason &&
-                                episodesBySeason[selectedSeason].map((ep) => {
-                                    const mapped = mapEpisode(ep, showId);
+                        <div className={styles.seasonSelector}>
+                            <label htmlFor="filter">Filter Episodes: </label>
+                            <select
+                                id="filter"
+                                value={episodeFilter}
+                                onChange={(e) =>
+                                    setEpisodeFilter(e.target.value as "all" | "watched" | "unwatched")
+                                }
+                            >
+                                <option value="all">All</option>
+                                <option value="watched">Watched</option>
+                                <option value="unwatched">Unwatched</option>
+                            </select>
+                        </div>
 
-                                    return username ? (
-                                        <EpisodeItem key={mapped.id}
-                                                     episode={mapped}
-                                                     username={username}
-                                                     show={{
-                                                         id: show.id,
-                                                         name: show.name,
-                                                         image: show.image ? { medium: show.image.medium } : undefined
-                                                     }}
-                                        />
-                                    ) : (
-                                        <li key={mapped.id}>
-                                            <span>Please log in</span>
-                                        </li>
-                                    );
-                                })}
+                        <ul className={styles.episodeList}>
+                            {filteredEpisodes.map((ep) => {
+                                const mapped = mapEpisode(ep, showId);
+                                return username ? (
+                                    <EpisodeItem
+                                        key={mapped.id}
+                                        episode={mapped}
+                                        username={username}
+                                        show={{
+                                            id: show.id,
+                                            name: show.name,
+                                            image: show.image ? { medium: show.image.medium } : undefined,
+                                        }}
+                                    />
+                                ) : (
+                                    <li key={mapped.id}>
+                                        <span>Please log in</span>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </>
                 ) : (
@@ -158,5 +193,3 @@ const ShowDetails: React.FC = () => {
 };
 
 export default ShowDetails;
-
-
