@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getSchedule, searchShows } from "../api/tvmaze";
+import { getSchedule, searchShows, getPopularShows } from "../api/tvmaze";
 import ShowCard from "../components/ShowCard";
 import styles from './Home.module.css';
 import { Link } from "react-router-dom";
@@ -35,6 +35,8 @@ export default function Home() {
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchLoading, setSearchLoading] = useState(false);
+    const [popularShows, setPopularShows] = useState<any[]>([]);
+
 
     const { t } = useTranslation();
 
@@ -62,11 +64,20 @@ export default function Home() {
                 setSearchResults([]);
                 return;
             }
+
+            const cached = sessionStorage.getItem(`search_${searchQuery}`);
+            if(cached){
+                setSearchResults(JSON.parse(cached));
+                return;
+            }
+
             try {
                 setSearchLoading(true);
                 const res = await searchShows(searchQuery);
                 const results = res.data.map((item: any) => item.show);
+
                 setSearchResults(results);
+                sessionStorage.setItem(`search_${searchQuery}`, JSON.stringify(results));
             } catch (err) {
                 console.error("Error searching shows:", err);
             } finally {
@@ -76,6 +87,28 @@ export default function Home() {
 
         return () => clearTimeout(delayDebounce);
     }, [searchQuery]);
+
+    useEffect(() => {
+        async function fetchPopular() {
+            try {
+                const res = await getPopularShows(1); // page 1
+                setPopularShows(res.data);
+            } catch (err) {
+                console.error("Error fetching popular shows:", err);
+            }
+        }
+        fetchPopular();
+    }, []);
+
+
+    const normalizedPopular = popularShows.map((show: any) => ({
+        id: show.id,
+        name: show.name,
+        image: show.image,
+        network: show.network,
+        genres: show.genres || [],
+    }));
+
 
     const normalizedSchedule = schedule.map((item: any) => ({
         id: item.show.id,
@@ -248,6 +281,25 @@ export default function Home() {
                                 <h2>{t("todaysSchedule")}</h2>
                             </div>
                         )}
+                        {normalizedPopular.length > 0 && (
+                            <div style={{ width: "100%", padding: "25px" }}>
+                                <h2>Top 10 Shows</h2>
+                                <div className={styles.fullRow}>
+                                    {normalizedPopular.slice(0,10).map(show => (
+                                        <ShowCard
+                                            key={show.id}
+                                            showId={show.id}
+                                            title={show.name}
+                                            imgUrl={show.image?.medium}
+                                            network={show.network?.name}
+                                            username={user ? `${user.name}_${user.surname}_${user.subscription}` : undefined}
+                                            showStatus={false}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
 
                         {Object.keys(genreMap)
                             .filter(genre => selectedGenre === "All" || genre === selectedGenre)

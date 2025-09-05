@@ -13,3 +13,6 @@ export const getSchedule = (country = "US", date: string) =>
 
 export const getShowEpisodes = (id: number | undefined) =>
     API.get(`/shows/${id}?embed=episodes`);
+
+export const getPopularShows = (page: number = 0) =>
+    API.get(`/shows?page=${page}`);
