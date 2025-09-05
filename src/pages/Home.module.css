@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -18,7 +23,7 @@
     display: flex;
     overflow-x: auto;
     gap: 10px;
-
+    padding-top: 20px;
 }
 
 .fullRow {
@@ -49,7 +54,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #1c1c1c;
+    background-color: var(--header-bg);
     width: 100vw;
     box-sizing: border-box;
 }
@@ -68,17 +73,18 @@
 }
 
 .navbar a {
-    color: #fff;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
     border-radius: 4px;
     transition: background-color 0.2s, transform 0.2s;
+    color: var(--text-color);
+
 }
 
 .navbar a:hover {
-    background-color: #ff4c4c;
     transform: translateY(-2px);
+    background-color: var(--primary-color);
 }
 
 .search {
@@ -90,31 +96,30 @@
 .search input {
     padding: 6px 10px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--muted-text);
 }
 
 .search button {
     padding: 6px 12px;
     border-radius: 4px;
     border: none;
-    background-color: #ff4c4c;
-    color: white;
     cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .search button:hover {
-    background-color: #e03e3e;
+    background-color: var(--primary-hover);
 }
 
 .noShows {
-    color: dimgrey;
     font-weight: bold;
     font-size: 20px;
     padding: 20px;
     margin-bottom: 100rem;
     margin-left: 40rem;
+    color: var(--muted-text);
 }
-
 
 .userWrapper {
     position: relative;
@@ -130,7 +135,8 @@
 }
 
 .userIcon:hover {
-    color: red;
+    color: var(--primary-color);
+
 }
 
 .userDropdown {
@@ -139,34 +145,34 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background: black;
-    border: 1px solid dimgrey;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     min-width: 240px;
     min-height: 280px;
     z-index: 1000;
+    background: var(--dropdown-bg);
+    border: 1px solid var(--muted-text);
 }
 
 .userDropdown p {
     margin: 0.25rem 0;
     font-size: 0.9rem;
-    color: dimgrey;
     padding: 10px 20px;
+    color: var(--muted-text);
 }
 
 
 .logout button {
     border-radius: 4px;
     border: none;
-    color: dimgrey;
     font-weight: normal;
     cursor: pointer;
-    background-color: black;
+    background-color: var(--dropdown-bg);
+    color: var(--muted-text);
 }
 .logout button:hover{
-    color: red;
-    background-color: black;
+    color: var(--primary-color);
+    background-color: var(--dropdown-bg);
 }
 .logout {
     padding: 10px 50px;
@@ -176,15 +182,15 @@
 .edit a{
     border-radius: 4px;
     border: none;
-    color: dimgrey;
     font-weight: normal;
     cursor: pointer;
-    background-color: black;
     padding: 7px 55px;
+    background-color: var(--dropdown-bg);
+    color: var(--muted-text);
 }
 .edit a:hover{
-    color: red;
-    background-color: black;
+    color: var(--primary-color);
+    background-color: var(--dropdown-bg);
 }
 
 .edit {

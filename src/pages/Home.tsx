@@ -12,6 +12,9 @@ import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import ReactCountryFlag from "react-country-flag";
 import Skeleton from "../components/Skeleton";
+import { useTheme } from "../context/ThemeContext";
+
+
 
 const { overlay } = modalCss;
 
@@ -22,6 +25,7 @@ type User = {
 };
 
 export default function Home() {
+    const {theme, toggleTheme} = useTheme();
     const [selectedGenre, setSelectedGenre] = useState<string>("All");
     const [schedule, setSchedule] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -202,6 +206,9 @@ export default function Home() {
                                         </div>
                                         <div className={styles.logout}>
                                             <button onClick={logout}>{t("logout")}</button>
+                                            <button onClick={toggleTheme} style={{paddingLeft: "20px"}}>
+                                                {theme === "light" ? "Dark🌙" : "Light☀️"}
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -218,11 +225,12 @@ export default function Home() {
                                 <ReactCountryFlag countryCode="GB" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
                             )}
                         </div>
+
                     </div>
                 </div>
                 {loading || searchLoading ? (
                         <div style={{ padding: "20px" }}>
-                            <Skeleton width="200px" height="30px" /> {/* Fake title */}
+                            <Skeleton width="200px" height="30px" />
                             <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
                                 {[...Array(6)].map((_, i) => (
                                     <Skeleton key={i} width="150px" height="225px" borderRadius="8px" />
@@ -236,7 +244,7 @@ export default function Home() {
                 ) : (
                     <>
                         {searchQuery.trim() === "" && selectedGenre === "All" && (
-                            <div style={{ width: "100%", paddingLeft: "25px" }}>
+                            <div style={{ width: "100%", padding: "25px" }}>
                                 <h2>{t("todaysSchedule")}</h2>
                             </div>
                         )}
@@ -244,7 +252,7 @@ export default function Home() {
                         {Object.keys(genreMap)
                             .filter(genre => selectedGenre === "All" || genre === selectedGenre)
                             .map((genre) => (
-                                <div key={genre} style={{ width: "100%", paddingLeft: "30px" }}>
+                                <div key={genre} style={{ width: "100%", padding: "30px" }}>
                                     <h3>{genre}</h3>
                                     <div className={selectedGenre === genre ? styles.fullRow : styles.row}>
                                         {genreMap[genre].map(show => (

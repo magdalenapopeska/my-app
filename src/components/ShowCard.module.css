@@ -5,14 +5,16 @@
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
     text-decoration: none;
-    color: white;
+    color: var(--text-color);
+    background-color: var(--header-bg);
 }
 
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     text-decoration: none;
-    color: white;
+    color: var(--text-color);
+
 }
 
 .card img {
@@ -24,12 +26,15 @@
 .card h2 {
     font-size: 1rem;
     margin: 10px;
+    color: var(--text-color);
+
 }
 
 .card p {
     font-size: 0.8rem;
-    color: #666;
     margin: 0 10px 10px;
+    color: var(--muted-text);
+
 }
 
 .cardWrapper {
@@ -50,14 +55,18 @@
     border: none;
     color: white;
     cursor: pointer;
+    background-color: var(--primary-color);
+
 }
 
 .watchlistButtons button:hover {
-    background-color: #e03e3e;
+    background-color: var(--primary-hover);
 }
 
 .watchlistButtons p {
     margin: 0;
     font-size: 0.8rem;
+    color: var(--muted-text);
+
 }
 

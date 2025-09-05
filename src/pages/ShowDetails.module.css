@@ -7,8 +7,7 @@
 .title {
     font-size: 1.8rem;
     font-weight: bold;
-    color: white;
-
+    color: var(--text-color);
 }
 
 .episodeList {
@@ -21,40 +20,40 @@
 .episodeItem {
     margin-bottom: 0.5rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--muted-text);
     transition: background-color 0.2s ease;
 }
 
-
 .episodeLabel {
     font-weight: bold;
+    color: var(--text-color);
 }
 
 .episodeTitle {
     margin-left: 0.3rem;
-    color: white;
+    color: var(--text-color);
 }
 
 .airDate {
     font-style: italic;
-    color: #666;
+    color: var(--muted-text);
     margin-left: 0.3rem;
 }
 
 .noEpisodes {
     font-style: italic;
-    color: #999;
+    color: var(--muted-text);
 }
 
 .watchlistButtons button {
     padding: 6px 12px;
     border-radius: 4px;
     border: none;
-    color: white;
+    background-color: var(--primary-color);
+    color: whitesmoke;
     cursor: pointer;
 }
 
-.watchlistButtons button:hover{
-    background-color: #e03e3e;
-
+.watchlistButtons button:hover {
+    background-color: var(--primary-hover);
 }

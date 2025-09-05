@@ -4,6 +4,8 @@ import classes from './Account.module.css';
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import ReactCountryFlag from "react-country-flag";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 type UserData = {
     name: string;
@@ -92,10 +94,11 @@ export default function Account() {
             <div className={classes.container}>
                 <h1>{t("editYourProfile")}</h1>
                 <div className={classes.image}>
-                    <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSez5Hhwz8qtjcctv1WFL6Td8NVdHUtSw12hw&s"
-                        alt="Profile"
+                    <FontAwesomeIcon
+                        icon={faUser}
+                        className={classes.userIcon}
                     />
+
                 </div>
                 <form onSubmit={handleFormSubmit}>
                     <div className={classes.form}>
