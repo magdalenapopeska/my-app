@@ -11,6 +11,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import ReactCountryFlag from "react-country-flag";
+import Skeleton from "../components/Skeleton";
 
 const { overlay } = modalCss;
 
@@ -28,6 +29,8 @@ export default function Home() {
     const [user, setUser] = useState<User | null>(null);
     const [isDropdownOpen, setisDropdownOpen] = useState(false);
     const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchLoading, setSearchLoading] = useState(false);
 
     const { t } = useTranslation();
 
@@ -42,9 +45,11 @@ export default function Home() {
 
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
+        setLoading(true);
         getSchedule("US", today)
             .then(res => setSchedule(res.data))
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(()=>setLoading(false));
     }, []);
 
     useEffect(() => {
@@ -54,11 +59,14 @@ export default function Home() {
                 return;
             }
             try {
+                setSearchLoading(true);
                 const res = await searchShows(searchQuery);
                 const results = res.data.map((item: any) => item.show);
                 setSearchResults(results);
             } catch (err) {
                 console.error("Error searching shows:", err);
+            } finally {
+                setSearchLoading(false);
             }
         }, 500);
 
@@ -212,8 +220,16 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-
-                {activeData.length === 0 ? (
+                {loading || searchLoading ? (
+                        <div style={{ padding: "20px" }}>
+                            <Skeleton width="200px" height="30px" /> {/* Fake title */}
+                            <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+                                {[...Array(6)].map((_, i) => (
+                                    <Skeleton key={i} width="150px" height="225px" borderRadius="8px" />
+                                ))}
+                            </div>
+                        </div>
+                    ) : activeData.length === 0 ? (
                     <div className={styles.noShows}>
                         <p>{t("noShows")}</p>
                     </div>
