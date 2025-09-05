@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import ShowDetails from "./pages/ShowDetails";
 import WatchList from "./pages/WatchList";
 import Account from "./pages/Account";
-
+import {Toaster} from "react-hot-toast";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -23,7 +23,13 @@ const router = createBrowserRouter(
 );
 
 function App() {
-    return <RouterProvider router={router} />;
+    return(
+        <>
+            <RouterProvider router={router} />;
+            <Toaster position={"top-right"} reverseOrder={false}/>
+        </>
+        );
+
 }
 
 export default App;
