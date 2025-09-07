@@ -18,7 +18,7 @@ export default function WatchList() {
     const [enrichedShows, setEnrichedShows] = useState<any[]>([]);
     const [filter, setFilter] = useState<"all" | "watched" | "planned">("all");
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
 
     useEffect(() => {
@@ -33,10 +33,10 @@ export default function WatchList() {
                         try {
                             const res = await fetch(`https://api.tvmaze.com/shows/${show.showId}`);
                             const fullShow = await res.json();
-                            return { ...show, genres: fullShow.genres ?? [] };
+                            return {...show, genres: fullShow.genres ?? []};
                         } catch (e) {
                             console.error("Failed to fetch genres for show:", show.showId, e);
-                            return { ...show, genres: ["Other"] };
+                            return {...show, genres: ["Other"]};
                         }
                     }
                     return show;
@@ -68,67 +68,111 @@ export default function WatchList() {
     function toggleLanguage() {
         const newLang = i18n.language === "en" ? "de" : "en";
         i18n.changeLanguage(newLang);
+    };
+
+    function getNextEpisode(show: any) {
+        if (!show.episodes || show.episodes.length === 0) return null;
+
+        const unwatched = show.episodes
+            .filter((ep: any) => ep.status !== "watched")
+            .sort((a: any, b: any) =>
+                a.season === b.season ? a.number - b.number : a.season - b.season
+            );
+
+        return unwatched.length > 0 ? unwatched[0] : null;
     }
+
 
     return (
         <>
             <div className={classes.container}>
                 <div className={classes.header}>
                     <div className={classes.navbar}>
+                        <div className={classes.backHome}>
+                            <Link to="/">{t("backToHome")}</Link>
+                        </div>
 
-            <div className={classes.backHome}>
-                <Link to="/">{t("backToHome")}</Link>
-            </div>
-
-                <div className={classes.filter}>
-                    <select
-                        id="status"
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value as any)}
-                    >
-                        <option value="all">{t("all")}</option>
-                        <option value="watched">{t("watched")}</option>
-                        <option value="planned">{t("planned")}</option>
-                    </select>
-                </div>
-                    </div>
-            <div
-                onClick={toggleLanguage}
-                style={{ cursor: "pointer", marginLeft: "10px", fontSize: "22px" }}
-            >
-                {i18n.language === "en" ? (
-                    <ReactCountryFlag countryCode="DE" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
-                ) : (
-                    <ReactCountryFlag countryCode="GB" svg style={{ width: "1em", height: "0.5em", marginBottom: "7px" }} />
-                )}
-            </div>
-
-            </div>
-
-            <div className={classes.title}>
-                <h2>{t("yourWatchList")}</h2>
-            </div>
-
-
-
-            <div className={classes.genreSection}>
-                {Object.entries(showsByGenre).map(([genre, shows]) => (
-                    <div key={genre} className={classes.genreSelection}>
-                        <h3 className={classes.genreTitle}>{genre}</h3>
-                        <div className={classes.watchListGrid}>
-                            {shows.map((show: any) => (
-                                <div key={show.showId} className="cardWrapper">
-                                    <ShowCard
-                                        showId={show.showId}
-                                        imgUrl={show.image}
-                                        title={show.name}
-                                    />
-                                </div>
-                            ))}
+                        <div className={classes.filter}>
+                            <select
+                                id="status"
+                                value={filter}
+                                onChange={(e) => setFilter(e.target.value as any)}
+                            >
+                                <option value="all">{t("all")}</option>
+                                <option value="watched">{t("watched")}</option>
+                                <option value="planned">{t("planned")}</option>
+                            </select>
                         </div>
                     </div>
-                ))}
-            </div>
+
+                    <div
+                        onClick={toggleLanguage}
+                        style={{cursor: "pointer", marginLeft: "10px", fontSize: "22px"}}
+                    >
+                        {i18n.language === "en" ? (
+                            <ReactCountryFlag
+                                countryCode="DE"
+                                svg
+                                style={{width: "1em", height: "0.5em", marginBottom: "7px"}}
+                            />
+                        ) : (
+                            <ReactCountryFlag
+                                countryCode="GB"
+                                svg
+                                style={{width: "1em", height: "0.5em", marginBottom: "7px"}}
+                            />
+                        )}
+                    </div>
+                </div>
+
+                <div className={classes.title}>
+                    <h2>{t("yourWatchList")}</h2>
+                </div>
+
+                <div className={classes.nextEpisodes}>
+                    <h2>{t("nextEpisodes")}</h2>
+                    <div className={classes.watchListGrid}>
+                        {filteredShows.map((show: any) => {
+                            const nextEp = getNextEpisode(show);
+                            if (!nextEp) return null;
+
+                            const isFuture = new Date(nextEp.airdate) > new Date();
+
+                            return (
+                                <div key={show.showId} className={classes.nextCard}>
+                                    <h3>{show.name}</h3>
+                                    <p>
+                                        Next: S{nextEp.season}E{nextEp.number} — {nextEp.name}
+                                    </p>
+                                    <p>
+                                        {isFuture
+                                            ? `Airs on ${nextEp.airdate}`
+                                            : t("readyToWatch")}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className={classes.genreSection}>
+                    {Object.entries(showsByGenre).map(([genre, shows]) => (
+                        <div key={genre} className={classes.genreSelection}>
+                            <h3 className={classes.genreTitle}>{genre}</h3>
+                            <div className={classes.watchListGrid}>
+                                {shows.map((show: any) => (
+                                    <div key={show.showId} className="cardWrapper">
+                                        <ShowCard
+                                            showId={show.showId}
+                                            imgUrl={show.image}
+                                            title={show.name}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     );
