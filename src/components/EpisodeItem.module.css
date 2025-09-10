@@ -1,0 +1,13 @@
+
+.watchlistButtons button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    background-color: black;
+    color: whitesmoke;
+    cursor: pointer;
+}
+
+.watchlistButtons button:hover {
+    background-color: var(--primary-hover);
+}

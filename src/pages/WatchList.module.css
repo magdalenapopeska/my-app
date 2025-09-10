@@ -9,7 +9,6 @@
     border-radius: 4px;
     transition: background-color 0.2s, transform 0.2s;
 }
-
 .backHome a:hover {
     background-color: var(--primary-color);
     transform: translateY(-2px);
@@ -21,30 +20,23 @@
     gap: 2rem;
 }
 
-.genreBlock {
-    padding: 1rem;
-}
-
 .genreTitle {
     margin-bottom: 1rem;
     padding-left: 30px;
     color: var(--text-color);
-
 }
 
 .watchListGrid {
     display: flex;
     overflow-x: auto;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1rem;
     padding-left: 30px;
 }
 
 .title h2{
     padding-left: 30px;
-    padding-top: 100px;
+    padding-top: 120px;
     color: var(--text-color);
-
 }
 
 .filter {
@@ -53,11 +45,6 @@
     gap: 0.5rem;
     font-size: 14px;
     color: var(--text-color);
-
-}
-
-.filter label {
-    font-weight: bold;
 }
 
 .filter select {
@@ -65,19 +52,13 @@
     border-radius: 4px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
     background-color: var(--header-bg);
     color: var(--text-color);
-}
-
-.filter select:hover {
-    background-color: #444;
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     width: 100%;
     box-sizing: border-box;
 }
@@ -86,15 +67,14 @@
     position: absolute;
     top: 0;
     left: 0;
+    right: 0;
     z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    box-sizing: border-box;
     padding-right: 25px;
     background-color: var(--header-bg);
-
 }
 
 .navbar {
@@ -102,35 +82,94 @@
     align-items: center;
 }
 
-.navbar a {
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 4px;
-    transition: background-color 0.2s, transform 0.2s;
-    color: var(--text-color);
-
-}
-
 .navbar a:hover {
-    transform: translateY(-2px);
     background-color: var(--primary-color);
+    transform: translateY(-2px);
 }
 
-.nextEpisodes h2{
+.nextEpisodes {
+    width: 100%;
+    padding: 25px 0;
+    box-sizing: border-box;
+}
+
+.nextEpisodes h3 {
     margin: 20px 0;
     padding-left: 30px;
 }
 
+
+.nextRowWrapper {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 10px;
+    padding: 20px 0 0 30px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    height: max-content;
+}
+
+.nextRow {
+    display: flex;
+    gap: 10px;
+}
+
+.nextRow > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+
+}
+
 .nextCard {
-    background-color: var(--header-bg);
+    flex: 0 0 auto;
+    min-width: 250px;
+    width: 250px;
     border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-    text-align: left;
+    overflow: hidden;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
+    scroll-snap-align: start;
+    background-color: var(--header-bg);
 }
 
 .nextCard:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     transform: translateY(-3px);
+}
+
+.nextPoster {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.nextDetails {
+    padding: 0.8rem;
+    text-align: left;
+}
+
+.nextDetails h3 {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+    color: var(--text-color);
+}
+
+.episodeTitle {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.episodeInfo {
+    font-size: 0.85rem;
+    color: var(--muted-text);
+}
+
+.nextRowWrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.nextRowWrapper::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
 }

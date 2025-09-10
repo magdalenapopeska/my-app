@@ -283,7 +283,7 @@ export default function Home() {
                         )}
                         {normalizedPopular.length > 0 && (
                             <div style={{ width: "100%", padding: "25px" }}>
-                                <h2>Top 10 Shows</h2>
+                                <h3 style={{paddingBottom: "10px"}}>{t("top10Shows")}</h3>
                                 <div className={styles.fullRow}>
                                     {normalizedPopular.slice(0,10).map(show => (
                                         <ShowCard

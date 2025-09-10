@@ -11,7 +11,7 @@ type UserData = {
     name: string;
     surname: string;
     subscription: "Monthly" | "Yearly";
-    watchList: any[];
+    watchList?: any[];
 };
 export default function Account() {
     const navigate = useNavigate();
@@ -28,23 +28,39 @@ export default function Account() {
     }
     function handleSubmit(data: { name: string; surname: string; subscription: "Monthly" | "Yearly" }) {
         if (!user) return;
-        const oldKey = `user_${user.name}_${user.subscription}`;
-        const storedOldUser = localStorage.getItem(oldKey);
-        const oldUserData = storedOldUser
-            ? JSON.parse(storedOldUser)
-            : { watchList: [], episodesPlanned: [], episodesWatched: [] };
-        const newKey = `user_${data.name}_${data.subscription}`;
-        const updatedUser = {
-            ...oldUserData,
-            ...data,
-        };
-        localStorage.setItem(newKey, JSON.stringify(updatedUser));
-        if (oldKey !== newKey) {
-            localStorage.removeItem(oldKey);
-        }
-        sessionStorage.setItem("user", JSON.stringify(updatedUser));
-        setUser(updatedUser);
-        navigate("/");
+
+        const oldUsername = `${user.name}_${user.surname}_${user.subscription}`;
+        const newUsername = `${data.name}_${data.surname}_${data.subscription}`;
+
+        const oldKey = `watchlist_${oldUsername}`;
+        const newKey = `watchlist_${newUsername}`;
+
+
+        console.log("Old username:", oldUsername);
+        console.log("New username:", newUsername);
+        console.log("Looking for oldKey:", oldKey);
+        console.log("Does oldKey exist in localStorage?", localStorage.getItem(oldKey));
+
+
+
+        const oldWatchlist = localStorage.getItem(oldKey);
+       if(oldWatchlist) {
+           localStorage.setItem(newKey, oldWatchlist);
+           if (oldKey != newKey) {
+               localStorage.removeItem(oldKey);
+           }
+       } else {
+           localStorage.setItem(newKey, JSON.stringify([]))
+       }
+
+       const updatedUser = {
+           ...data,
+       }
+
+       sessionStorage.setItem("user", JSON.stringify(updatedUser));
+       setUser(updatedUser);
+
+       navigate("/");
     }
     function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
