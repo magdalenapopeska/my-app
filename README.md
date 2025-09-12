@@ -1,73 +1,59 @@
-<<<<<<< HEAD
-# my-app
-=======
-# React + TypeScript + Vite
+# Watchlist App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple React + TypeScript + Vite application that allows users to manage their watchlist of shows. Users can add/remove shows, confirm actions via modals, and enjoy internationalized support (English & German).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup
 
-## Expanding the ESLint configuration
+1. Clone the repository
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/magdalenapopeska/my-app.git
+cd my-app
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
->>>>>>> 315b67a (chore: setup project with Vite, React, TypeScript)
+
+3. Start the development server
+
+```bash
+npm run dev
+```
+
+The app should now be running on http://localhost:5173 (default Vite dev server port).
+
+---
+
+## Environment Variables
+
+No special environment variables are required.  
+If you later need to use an API key for TVmaze, create a `.env` file:
+
+```env
+VITE_TVMAZE_API_KEY=your_api_key_here
+```
+
+Vite requires the `VITE_` prefix for environment variables.
+
+---
+
+## API & Data Notes
+
+- The app fetches show data from the [TVmaze API](https://www.tvmaze.com/api) using GET requests.  
+- Adding/removing shows in your watchlist is handled locally in React state.  
+- API quotas: TVmaze is free but has rate limits. Avoid sending too many requests too quickly.
+
+---
+
+## Tech Stack
+
+- React (with TypeScript)  
+- Vite for fast dev server and HMR  
+- CSS Modules for styling  
+- React-i18next for translations  
+- React Router for navigation
